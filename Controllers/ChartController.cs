@@ -26,6 +26,7 @@ namespace WebAppLab.Controllers
             return new JsonResult(artistSong);
         }
 
+
         [HttpGet("JsonDataAlbumSong")]
         public JsonResult JsonDataAlbumSong()
         {
