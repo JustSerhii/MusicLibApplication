@@ -7,7 +7,7 @@
 <h1>Song Reviews</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @Html.ActionLink("Add new song review", "Create", new {songId = @ViewBag.SongId})
 </p>
 <table class="table">
     <thead>

@@ -46,8 +46,8 @@ namespace WebAppLab.Controllers
                 return NotFound();
             }
 
-            return RedirectToAction("Index", "AlbumSongs", new { id = song.Id, name = song.Title });
-            //return RedirectToAction("Index", "SongReviews", new { id = song.Id, name = song.Title });
+            //return RedirectToAction("Index", "AlbumSongs", new { id = song.Id, name = song.Title });
+            return RedirectToAction("Index", "SongReviews", new { id = song.Id, name = song.Title });
         }
 
         // GET: Songs/Create

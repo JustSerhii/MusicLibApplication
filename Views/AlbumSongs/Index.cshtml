@@ -7,7 +7,7 @@
 <h1>Album songs</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @Html.ActionLink("Add new album song", "Create", new {albumId = @ViewBag.AlbumId})
 </p>
 <table class="table">
     <thead>

@@ -19,11 +19,15 @@ namespace WebAppLab.Controllers
         }
 
         // GET: AlbumSongs
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id, string? name)
 
         {
-            var dblibraryContext = _context.AlbumSongs.Include(a => a.Album).Include(a => a.Song);
-            return View(await dblibraryContext.ToListAsync());
+            if (id == null) return RedirectToAction("Index", "Albums");
+
+            ViewBag.AlbumId = id;
+            ViewBag.AlbumTitle = name;
+            var albumSongsByAlbum = _context.AlbumSongs.Where(b => b.AlbumId == id).Include(b => b.Album).Include(b => b.Song);
+            return View(await albumSongsByAlbum.ToListAsync());
         }
 
         // GET: AlbumSongs/Details/5
@@ -48,10 +52,15 @@ namespace WebAppLab.Controllers
         }
 
         // GET: AlbumSongs/Create
-        public IActionResult Create()
+        public IActionResult Create(int albumId)
         {
-            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "Id");
-            ViewData["SongId"] = new SelectList(_context.Songs, "Id", "Id");
+
+            //ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "Title");
+            ViewData["SongId"] = new SelectList(_context.Songs, "Id", "Title");
+
+            ViewBag.AlbumId = albumId;
+            ViewBag.AlbumTitle = _context.Albums.Where(c => c.Id == albumId).FirstOrDefault().Title;
+
             return View();
         }
 
@@ -60,17 +69,18 @@ namespace WebAppLab.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SongId,AlbumId")] AlbumSong albumSong)
-        {
+        public async Task<IActionResult> Create(int albumId, [Bind("Id,SongId,AlbumId")] AlbumSong albumSong)
+        {   
+            albumSong.AlbumId = albumId;
             if (ModelState.IsValid)
             {
                 _context.Add(albumSong);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "AlbumSongs", new { id = albumId, name = _context.Albums.Where(c => c.Id == albumId).FirstOrDefault().Title});;
             }
-            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "Id", albumSong.AlbumId);
+            //ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "Id", albumSong.AlbumId);
             ViewData["SongId"] = new SelectList(_context.Songs, "Id", "Id", albumSong.SongId);
-            return View(albumSong);
+            return RedirectToAction("Index", "AlbumSongs", new { id = albumId, name = _context.Albums.Where(c => c.Id == albumId).FirstOrDefault().Title }); ;
         }
 
         // GET: AlbumSongs/Edit/5

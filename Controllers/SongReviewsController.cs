@@ -19,10 +19,14 @@ namespace WebAppLab.Controllers
         }
 
         // GET: SongReviews
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id, string? name)
         {
-            var dblibraryContext = _context.SongReviews.Include(s => s.Song);
-            return View(await dblibraryContext.ToListAsync());
+            if (id == null) return RedirectToAction("Index", "Songs");
+
+            ViewBag.songId = id;
+            ViewBag.songTitle = name;
+            var songReviewsBySongs = _context.SongReviews.Where(b => b.SongId == id).Include(b => b.Song);
+            return View(await songReviewsBySongs.ToListAsync());
         }
 
         // GET: SongReviews/Details/5
@@ -45,9 +49,10 @@ namespace WebAppLab.Controllers
         }
 
         // GET: SongReviews/Create
-        public IActionResult Create()
+        public IActionResult Create(int songId)
         {
-            ViewData["SongId"] = new SelectList(_context.Songs, "Id", "Id");
+            ViewBag.songId = songId;
+            ViewBag.songTitle = _context.Songs.Where(c => c.Id == songId).FirstOrDefault().Title;
             return View();
         }
 
@@ -56,16 +61,18 @@ namespace WebAppLab.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,SongId,Title,WritingDate,ReviewContent,SongScore")] SongReview songReview)
-        {
+        public async Task<IActionResult> Create(int songId, [Bind("Id,SongId,Title,WritingDate,ReviewContent,SongScore")] SongReview songReview)
+        {   
+            songReview.SongId = songId;
             if (ModelState.IsValid)
             {
                 _context.Add(songReview);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "SongReviews", new { id = songId, name = _context.Songs.Where(c => c.Id == songId).FirstOrDefault().Title });
             }
-            ViewData["SongId"] = new SelectList(_context.Songs, "Id", "Id", songReview.SongId);
-            return View(songReview);
+            //ViewData["ArtistId"] = new SelectList(_context.Artists, "Id", "Name", song.ArtistId);
+            //ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "GenreName", song.GenreId);
+            return RedirectToAction("Index", "SongReviews", new { id = songId, name = _context.Songs.Where(c => c.Id == songId).FirstOrDefault().Title });
         }
 
         // GET: SongReviews/Edit/5

@@ -41,8 +41,9 @@ namespace WebAppLab.Controllers
                 return NotFound();
             }
 
-            return View(album);
+            return RedirectToAction("Index", "AlbumSongs", new { id = album.Id, name = album.Title });
         }
+
 
         // GET: Albums/Create
         public IActionResult Create()
@@ -135,6 +136,7 @@ namespace WebAppLab.Controllers
             return View(album);
         }
 
+
         // POST: Albums/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -157,6 +159,22 @@ namespace WebAppLab.Controllers
         private bool AlbumExists(int id)
         {
           return (_context.Albums?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        public async Task<IActionResult> ReviewAdd(int? id)
+        {
+            if (id == null || _context.Albums == null)
+            {
+                return NotFound();
+            }
+
+            var album = await _context.Albums
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (album == null)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction("Index", "AlbumReviews", new { id = album.Id, name = album.Title });
         }
     }
 }

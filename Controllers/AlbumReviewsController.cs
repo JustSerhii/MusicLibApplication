@@ -22,11 +22,11 @@ namespace WebAppLab.Controllers
         public async Task<IActionResult> Index(int? id, string? name)
         {
             if (id == null) return RedirectToAction("Index", "Albums");
-            
+
             ViewBag.AlbumId = id;
             ViewBag.AlbumTitle = name;
-            var albumReviewsByAlbum = _context.Albums.Where(b=>b.Id == id).Include(b => b.Title);
-            return View(await albumReviewsByAlbum.ToListAsync());
+            var albumReviewsBySongs = _context.AlbumReviews.Where(b => b.AlbumId == id).Include(b => b.Album);
+            return View(await albumReviewsBySongs.ToListAsync());
         }
 
         // GET: AlbumReviews/Details/5
@@ -49,9 +49,10 @@ namespace WebAppLab.Controllers
         }
 
         // GET: AlbumReviews/Create
-        public IActionResult Create()
+        public IActionResult Create(int albumId)
         {
-            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "Id");
+            ViewBag.AlbumId = albumId;
+            ViewBag.AlbumTitle = _context.Albums.Where(c => c.Id == albumId).FirstOrDefault().Title;
             return View();
         }
 
@@ -60,16 +61,18 @@ namespace WebAppLab.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AlbumId,Title,WritingDate,ReviewContent,AlbumScore")] AlbumReview albumReview)
+        public async Task<IActionResult> Create(int albumId, [Bind("Id,AlbumId,Title,WritingDate,ReviewContent,AlbumScore")] AlbumReview albumReview)
         {
+            albumReview.AlbumId = albumId;
             if (ModelState.IsValid)
             {
                 _context.Add(albumReview);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "AlbumReviews", new { id = albumId, name = _context.Albums.Where(c => c.Id == albumId).FirstOrDefault().Title });
             }
-            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "Id", albumReview.AlbumId);
-            return View(albumReview);
+            //ViewData["ArtistId"] = new SelectList(_context.Artists, "Id", "Name", song.ArtistId);
+            //ViewData["GenreId"] = new SelectList(_context.Genres, "Id", "GenreName", song.GenreId);
+            return RedirectToAction("Index", "AlbumReviews", new { id = albumId, name = _context.Albums.Where(c => c.Id == albumId).FirstOrDefault().Title });
         }
 
         // GET: AlbumReviews/Edit/5
