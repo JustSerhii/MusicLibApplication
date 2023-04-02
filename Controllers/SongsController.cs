@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -176,6 +177,114 @@ namespace WebAppLab.Controllers
         private bool SongExists(int id)
         {
             return (_context.Songs?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Import(IFormFile fileExcel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (fileExcel != null)
+                {
+                    using (var stream = new FileStream(fileExcel.FileName, FileMode.Create))
+                    {
+                        await fileExcel.CopyToAsync(stream);
+                        using (XLWorkbook workbook = new XLWorkbook(stream))
+                        {
+                            foreach (IXLWorksheet worksheet in workbook.Worksheets)
+                            {
+                                Song newsong;
+                                var l = (from song in _context.Songs
+                                         where song.Title.Contains(worksheet.Name)
+                                         select song).ToList();
+                                if (l.Count > 0)
+                                {
+                                    newsong = l[0];
+                                }
+                                else
+                                {
+                                    newsong = new Song();
+                                    newsong.Title = worksheet.Name;
+                                    //newsong.r = "from EXCEL";
+                                    _context.Songs.Add(newsong);
+                                }
+                                foreach (IXLRow row in worksheet.RowsUsed().Skip(1))
+                                {
+                                    try
+                                    {
+                                        /*Models.Department department = new Models.Department();
+                                        department.DepName = row.Cell(1).Value.ToString();
+                                        department.DateOfFoundation = row.Cell(2).Value;
+                                        department.Loc = newloc;
+                                        _context.Departments.Add(department);*/
+
+                                        SongReview songreview;
+                                        var d = (from song in _context.Songs where song.Title.Contains(row.Cell(1).Value.ToString()) select song).ToList();
+                                        if (d.Count == 0)
+                                        {
+                                            songreview = new SongReview();
+                                            songreview.Title = row.Cell(1).Value.ToString();
+                                            songreview.WritingDate = row.Cell(2).Value;
+                                            songreview.ReviewContent = row.Cell(3).Value.ToString();
+                                            songreview.SongScore = (int)row.Cell(4).Value;
+                                            songreview.Song = newsong;
+                                            _context.SongReviews.Add(songreview);
+                                        }
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.ToString());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        public ActionResult Export()
+        {
+            using (XLWorkbook workbook = new XLWorkbook())
+            {
+                var songs = _context.Songs.Include("SongReviews").ToList();
+
+                foreach (var s in songs)
+                {
+                    var worksheet = workbook.Worksheets.Add(s.Title);
+
+                    worksheet.Cell("A1").Value = "Title";
+                    worksheet.Cell("B1").Value = "Date of Writing";
+                    worksheet.Cell("C1").Value = "Review Content";
+                    worksheet.Cell("E1").Value = "Song Score";
+                    worksheet.Row(1).Style.Font.Bold = true;
+                    var songreviews = s.SongReviews.ToList();
+
+                    for (int i = 0; i < songreviews.Count; i++)
+                    {
+                        worksheet.Cell(i + 2, 1).Value = songreviews[i].Title;
+                        worksheet.Cell(i + 2, 2).Value = songreviews[i].WritingDate;
+                        //worksheet.Cell(i + 2, 3).Value = l.LocName;
+                        worksheet.Cell(i + 2, 3).Value = songreviews[i].ReviewContent;
+                        worksheet.Cell(i + 2, 4).Value = songreviews[i].SongScore;
+                    }
+                }
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    stream.Flush();
+                    return new FileContentResult(stream.ToArray(),
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                    {
+                        FileDownloadName = $"reviews_{DateTime.UtcNow.ToShortDateString()}.xlsx"
+                    };
+
+                }
+            }
         }
     }
 }
