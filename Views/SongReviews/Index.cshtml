@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<WebAppLab.SongReview>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Song Reviews";
 }
 
-<h1>Song Reviews</h1>
+<h1>Song Reviews to song @ViewBag.SongTitle</h1>
 
 <p>
     @Html.ActionLink("Add new song review", "Create", new {songId = @ViewBag.SongId})
