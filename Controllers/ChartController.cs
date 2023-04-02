@@ -25,5 +25,18 @@ namespace WebAppLab.Controllers
             }
             return new JsonResult(artistSong);
         }
+
+        [HttpGet("JsonDataAlbumSong")]
+        public JsonResult JsonDataAlbumSong()
+        {
+            var albums = _context.Albums.Include(b => b.AlbumSongs).ToList();
+            List<object> _albumSong = new();
+            _albumSong.Add(new[] { "Album", "Number of songs" });
+            foreach (var album in albums)
+            {
+                _albumSong.Add(new object[] { album.Title, album.AlbumSongs.Count() });
+            }
+            return new JsonResult(_albumSong);
+        }
     }
 }
