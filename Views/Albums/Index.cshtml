@@ -9,6 +9,26 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<div>
+    <h3>Choose excel-file for uploading</h3>
+    @using (Html.BeginForm("Import", "Albums", FormMethod.Post, new { enctype = "multipart/form-data", id = "frm-excel" }))
+    {
+        <div>
+            Upload Excel-file:
+            <input type="file" name="fileExcel" id="fileExcel" class="form-control btn btn-light" />
+            <div>
+                <input type="submit" value="Upload" class="btn btn-light" />
+            </div>
+        </div>
+    }
+</div>
+
+<div>
+    <h3>Export info to file</h3>
+    <a asp-action="Export" class="btn btn-light">Export</a>
+</div>
+
 <table class="table">
     <thead>
         <tr>
