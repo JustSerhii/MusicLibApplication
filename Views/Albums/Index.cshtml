@@ -10,6 +10,19 @@
     <a asp-action="Create">Create New</a>
 </p>
 
+<style>
+    .form-control {
+        width: 20%;
+        display: block;
+        margin-bottom: 8px;
+        margin-top: 8px;
+    }
+
+    .btn{
+        margin-bottom: 10px;
+    }
+</style>
+
 <div>
     <h3>Choose excel-file for uploading</h3>
     @using (Html.BeginForm("Import", "Albums", FormMethod.Post, new { enctype = "multipart/form-data", id = "frm-excel" }))
