@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAppLab;
-using ClosedXML.Excel;
 
 namespace WebAppLab.Controllers
 {
@@ -159,117 +158,6 @@ namespace WebAppLab.Controllers
         {
           return (_context.Artists?.Any(e => e.Id == id)).GetValueOrDefault();
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Import(IFormFile fileExcel)
-        {
-            if (ModelState.IsValid)
-            {
-                if (fileExcel != null)
-                {
-                    using (var stream = new FileStream(fileExcel.FileName, FileMode.Create))
-                    {
-                        await fileExcel.CopyToAsync(stream);
-                        using (XLWorkbook workbook = new XLWorkbook(stream))
-                        {
-                            foreach (IXLWorksheet worksheet in workbook.Worksheets)
-                            {
-                                Artist newArtist;
-                                var a = (from artist in _context.Artists
-                                         where artist.Name.Contains(worksheet.Name)
-                                         select artist).ToList();
-                                if (a.Count > 0)
-                                {
-                                    newArtist = a[0];
-                                }
-                                else
-                                {
-                                    newArtist = new Artist();
-                                    newArtist.Name = worksheet.Name;
-                                    newArtist.ActiveSince = new DateTime();
-                                    newArtist.ActivityStop = new DateTime();
-                                    _context.Artists.Add(newArtist);
-                                }
-                                foreach (IXLRow row in worksheet.RowsUsed().Skip(1))
-                                {
-                                    try
-                                    {
-                                        /*Models.Department department = new Models.Department();
-                                        department.DepName = row.Cell(1).Value.ToString();
-                                        department.DateOfFoundation = row.Cell(2).Value;
-                                        department.Loc = newloc;
-                                        _context.Departments.Add(department);*/
-
-                                        Song song;
-                                        var d = (from songs in _context.Songs where songs.Title.Contains(row.Cell(1).Value.ToString()) select songs).ToList();
-                                        if (d.Count == 0)
-                                        {
-                                            song = new Song();
-                                            song.Title = row.Cell(1).Value.ToString();
-                                            song.SongLength = (double)row.Cell(2).Value;
-                                            song.ReleaseDate = row.Cell(3).GetDateTime();
-                                            song.GenreId = (int)row.Cell(5).Value;
-                                            song.Artist = newArtist;
-                                            _context.Songs.Add(song);
-                                        }
-
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Console.WriteLine(ex.ToString());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction(nameof(Index));
-        }
-
-        public ActionResult Export()
-        {
-            using (XLWorkbook workbook = new XLWorkbook())
-            {
-                var artists = _context.Artists.Include("Songs").ToList();
-
-                foreach (var a in artists)
-                {
-                    var worksheet = workbook.Worksheets.Add(a.Name);
-
-                    worksheet.Cell("A1").Value = "Song Title";
-                    worksheet.Cell("B1").Value = "Song Length";
-                    worksheet.Cell("C1").Value = "Release Date";
-                    worksheet.Cell("D1").Value = "Artist Name";
-                    worksheet.Cell("E1").Value = "Genre";
-                    //worksheet.Cell("D1").Value = "Artist Name";
-                    worksheet.Row(1).Style.Font.Bold = true;
-                    var songs = a.Songs.ToList();
-
-                    for (int i = 0; i < songs.Count; i++)
-                    {
-                        worksheet.Cell(i + 2, 1).Value = songs[i].Title;
-                        worksheet.Cell(i + 2, 2).Value = songs[i].SongLength;
-                        worksheet.Cell(i + 2, 3).Value = songs[i].ReleaseDate;
-                        worksheet.Cell(i + 2, 4).Value = a.Name;
-                        worksheet.Cell(i + 2, 5).Value = songs[i].GenreId;
-                        //worksheet.Cell(i + 2, 4).Value = a.Name;
-                    }
-                }
-                using (var stream = new MemoryStream())
-                {
-                    workbook.SaveAs(stream);
-                    stream.Flush();
-                    return new FileContentResult(stream.ToArray(),
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                    {
-                        FileDownloadName = $"artists_{DateTime.UtcNow.ToShortDateString()}.xlsx"
-                    };
-
-                }
-            }
-        }
+        
     }
 }
