@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAppLab;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAppLab.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class AlbumSongsController : Controller
     {
         private readonly DblibraryContext _context;

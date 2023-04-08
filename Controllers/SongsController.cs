@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAppLab;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAppLab.Controllers
 {
