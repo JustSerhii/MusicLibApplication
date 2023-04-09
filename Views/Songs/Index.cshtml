@@ -1,61 +1,67 @@
 ﻿@model IEnumerable<WebAppLab.Song>
 
 @{
-    ViewData["Title"] = "Songs by artist";
+	ViewData["Title"] = "Songs by artist";
 }
 
 <h1>Songs by artist @ViewBag.ArtistName</h1>
-
-<p>
-    @Html.ActionLink("Add new song", "Create", new {artistId = @ViewBag.ArtistId})
-</p>
+@if (User.IsInRole("admin"))
+{
+	<p>
+		@Html.ActionLink("Add new song", "Create", new {artistId = @ViewBag.ArtistId})
+	</p>
+}
 
 
 <table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReleaseDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SongLength)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Artist)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Genre)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReleaseDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SongLength)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Artist.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Genre.GenreName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Title)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.ReleaseDate)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.SongLength)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Artist)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Genre)
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Title)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.ReleaseDate)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.SongLength)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Artist.Name)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Genre.GenreName)
+				</td>
+				<td>
+					@if (User.IsInRole("admin"))
+					{
+						<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> <a>|</a>
+						<a asp-action="Delete" asp-route-id="@item.Id">Delete</a> <a>|</a>
+					}
+					<a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>

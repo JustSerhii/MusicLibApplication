@@ -7,7 +7,10 @@
 <h1>Albums</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @if (User.IsInRole("admin"))
+    {
+        <a asp-action="Create">Create New</a>
+    }
 </p>
 
 <style>
@@ -23,7 +26,10 @@
     }
 </style>
 
-<div>
+@if (User.IsInRole("admin"))
+{
+   <div>
+
     <h3>Choose excel-file for uploading</h3>
     @using (Html.BeginForm("Import", "Albums", FormMethod.Post, new { enctype = "multipart/form-data", id = "frm-excel" }))
     {
@@ -35,7 +41,9 @@
             </div>
         </div>
     }
-</div>
+    </div>
+}
+
 
 <div>
     <h3>Export info to file</h3>
@@ -64,10 +72,19 @@
                 @Html.DisplayFor(modelItem => item.ReleaseDate)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="ReviewAdd" asp-route-id="@item.Id">Reviews</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @if (User.IsInRole("admin"))
+                {
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> <a>|</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> <a>|</a>
+                }
+                <a asp-action="Details" asp-route-id="@item.Id">Songs</a> |
+                <a asp-action="ReviewAdd" asp-route-id="@item.Id">Reviews</a> 
+                @if (User.IsInRole("admin"))
+                {
+                    
+
+                }
+                
             </td>
         </tr>
 }

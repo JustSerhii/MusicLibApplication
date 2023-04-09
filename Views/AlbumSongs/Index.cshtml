@@ -1,41 +1,48 @@
 ﻿@model IEnumerable<WebAppLab.AlbumSong>
 
 @{
-    ViewData["Title"] = "Index";
+	ViewData["Title"] = "Index";
 }
 
 <h1>Album songs</h1>
-
-<p>
-    @Html.ActionLink("Add new album song", "Create", new {albumId = @ViewBag.AlbumId})
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Album)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Song)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Album.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Song.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+@if (User.IsInRole("admin"))
+{
+	<p>
+		@Html.ActionLink("Add new album song", "Create", new {albumId = @ViewBag.AlbumId})
+	</p>
 }
-    </tbody>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Album)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Song)
+			</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Album.Title)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Song.Title)
+				</td>
+				<td>
+					@if (User.IsInRole("admin"))
+					{
+						<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> <a>|</a>
+						<a asp-action="Delete" asp-route-id="@item.Id">Delete</a> <a>|</a>
+					}
+					<a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>

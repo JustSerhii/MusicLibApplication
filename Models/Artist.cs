@@ -16,6 +16,7 @@ public partial class Artist
 
     public DateTime ActiveSince { get; set; }
 
+    [Display(Name = "Activity Stop")]
     public DateTime? ActivityStop { get; set; }
 
     public virtual ICollection<Song> Songs { get; } = new List<Song>();
