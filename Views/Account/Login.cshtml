@@ -1,16 +1,24 @@
 ﻿@model WebAppLab.ViewModels.LoginViewModel  
 <h2>Log In</h2>
+
+<style>
+    .form-control{
+        width: 250px;
+        display: inline-block;
+    }
+</style>
+
 <form method="post" asp-controller="Account" asp-action="Login"
       asp-route-returnUrl="@Model.ReturnUrl">
     <div asp-validation-summary="ModelOnly"></div>
     <div>
         <label asp-for="Email"></label><br />
-        <input asp-for="Email" />
+        <input class="form-control" asp-for="Email" />
         <span asp-validation-for="Email"></span>
     </div>
     <div>
         <label asp-for="Password"></label><br />
-        <input asp-for="Password" />
+        <input class="form-control" asp-for="Password" />
         <span asp-validation-for="Password"></span>
     </div>
     <div>
@@ -18,6 +26,6 @@
         <input asp-for="RememberMe" />
     </div>
     <div>
-        <input type="submit" value="Login" />
+        <input type="submit" class="text-dark btn btn-light" value="Login" />
     </div>
 </form>

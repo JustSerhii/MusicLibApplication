@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="~/WebAppLab.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <style>
+        .register{
+            text-align: right;
+        }
+    </style>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -29,7 +34,37 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Genres" asp-action="Index">Genres</a>
                         </li>
-
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item nav-link text-dark">
+                                <p>
+                                    @User.Identity.Name @if (User.IsInRole("admin"))
+                                    {
+                                        <a> (admin)</a>
+                                    }
+                                </p>
+                            </li>
+                            <li class="nav-item">
+                                <form class="form-inline text-dark" method="post" asp-controller="Account" asp-action="Logout">
+                                    <input class="nav-link text-dark btn btn-light" type="submit" value="Log Out" />
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <form class="form-inline text-dark" method="post" asp-controller="Account" asp-action="Login">
+                                    <input class="nav-link text-dark btn btn-light" type="submit" value="Log In" />
+                                </form>
+                            </li>
+                            <li class="nav-item">
+                                <form class="form-inline text-dark" method="post" asp-controller="Account" asp-action="Register">
+                                    <input class="nav-link text-dark btn btn-light" type="submit" value="Register" />
+                                </form>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

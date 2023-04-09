@@ -1,28 +1,41 @@
 ﻿@model WebAppLab.ViewModels.RegisterViewModel
 <h2>New User Registration</h2>
+
+<style>
+    .form-control {
+        width: 250px;
+        display: inline-block;
+    }
+
+    .btn{
+        margin-top: 8px;
+    }
+
+</style>
+
 <form method="post" asp-controller="Account" asp-action="Register">
     <div asp-validation-summary="ModelOnly"></div>
     <div>
         <label asp-for="Email"></label><br />
-        <input asp-for="Email" />
+        <input class="form-control" asp-for="Email" />
         <span asp-validation-for="Email"></span>
     </div>
     <div>
         <label asp-for="Year"></label><br />
-        <input asp-for="Year" />
+        <input class="form-control" asp-for="Year" />
         <span asp-validation-for="Year"></span>
     </div>
     <div>
         <label asp-for="Password"></label><br />
-        <input asp-for="Password" />
+        <input class="form-control" asp-for="Password" />
         <span asp-validation-for="Password"></span>
     </div>
     <div>
         <label asp-for="PasswordConfirm"></label><br />
-        <input asp-for="PasswordConfirm" />
+        <input class="form-control" asp-for="PasswordConfirm" />
         <span asp-validation-for="PasswordConfirm"></span>
     </div>
     <div>
-        <input type="submit" value="Registration" />
+        <input type="submit" class="text-dark btn btn-light" value="Registration" />
     </div>
 </form>

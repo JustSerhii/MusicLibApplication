@@ -213,11 +213,6 @@ namespace WebAppLab.Controllers
                                 {
                                     try
                                     {
-                                        /*Models.Department albumreview = new Models.Department();
-                                        albumreview.DepName = row.Cell(1).Value.ToString();
-                                        albumreview.DateOfFoundation = row.Cell(2).Value;
-                                        albumreview.Loc = newloc;
-                                        _context.AlbumReviews.Add(albumreview);*/
 
                                         AlbumReview albumreview;
                                         var ar = (from areview in _context.AlbumReviews where areview.Title.Contains(row.Cell(1).Value.ToString()) select areview).ToList();

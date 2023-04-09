@@ -6,19 +6,3 @@
     <h1 class="display-4">Welcome to MusicLib</h1>
 </div>
 
-@if (User.Identity.IsAuthenticated)
-{
-    <p>@User.Identity.Name @if (User.IsInRole("admin"))
-        {
-            <a> (admin)</a>
-        }</p>
-
-    <form method="post" asp-controller="Account" asp-action="Logout">
-        <input type="submit" value="Log out" />
-    </form>
-}
-else
-{
-    <a asp-controller="Account" asp-action="Login">Log In</a> <a>|</a>
-    <a asp-controller="Account" asp-action="Register">Register</a>
-}
