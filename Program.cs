@@ -13,6 +13,7 @@ builder.Services.AddDbContext<DblibraryContext>(option => option.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<IdentityContext>(option => option.UseSqlServer(
