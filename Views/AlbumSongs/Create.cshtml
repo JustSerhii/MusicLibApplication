@@ -15,6 +15,7 @@
             <div class="form-group">
                 <label asp-for="SongId" class="control-label"></label>
                 <select asp-for="SongId" class ="form-control" asp-items="ViewBag.SongId"></select>
+                <span asp-validation-for="SongId" class="text-danger"></span>
             </div>
             <input type="hidden" value="@ViewBag.AlbumId" name="AlbumId" />
             <div class="form-group">

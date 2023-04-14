@@ -7,7 +7,7 @@ namespace WebAppLab
     {
         public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            string adminEmail = "ttp@email.com";
+            string adminEmail = "mi@email.com";
             string password = "_Aa123456";
             if (await roleManager.FindByNameAsync("admin") == null)
             {

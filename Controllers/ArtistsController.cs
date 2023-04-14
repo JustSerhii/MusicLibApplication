@@ -57,9 +57,27 @@ namespace WebAppLab.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,ActiveSince,ActivityStop")] Artist artist)
-        {
+        {   
+
             if (ModelState.IsValid)
             {
+                DateTime enteredDate = artist.ActiveSince;
+                DateTime? enteredDate1 = artist.ActivityStop;
+
+                DateTime startDate = new DateTime(1000, 1, 1);
+                DateTime endDate = DateTime.Now;
+
+                if (enteredDate <= startDate || enteredDate >= endDate)
+                {
+                    ModelState.AddModelError("ActiveSince", "Not available value. Set in range: 01.01.1000 - today");
+                    return View(artist);
+                }
+
+                if ((enteredDate1 <= enteredDate || enteredDate1 >= endDate) && enteredDate1 != null)
+                {
+                    ModelState.AddModelError("ActivityStop", "Not available value. Date should be after date of the start of activity until today");
+                    return View(artist);
+                }
                 _context.Add(artist);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -99,6 +117,23 @@ namespace WebAppLab.Controllers
             {
                 try
                 {
+                    DateTime enteredDate = artist.ActiveSince;
+                    DateTime? enteredDate1 = artist.ActivityStop;
+
+                    DateTime startDate = new DateTime(1000, 1, 1);
+                    DateTime endDate = DateTime.Now;
+
+                    if (enteredDate <= startDate || enteredDate >= endDate)
+                    {
+                        ModelState.AddModelError("ActiveSince", "Not available value. Set in range: 01.01.1000 - today");
+                        return View(artist);
+                    }
+
+                    if ((enteredDate1 <= enteredDate || enteredDate1 >= endDate) && enteredDate1 != null)
+                    {
+                        ModelState.AddModelError("ActivityStop", "Not available value. Date should be after date of the start of activity until today");
+                        return View(artist);
+                    }
                     _context.Update(artist);
                     await _context.SaveChangesAsync();
                 }

@@ -22,7 +22,7 @@
     </div>
     <div>
         <label asp-for="Year"></label><br />
-        <input class="form-control" asp-for="Year" />
+        <input class="form-control" min="1900" max="2011" value="2000" asp-for="Year" />
         <span asp-validation-for="Year"></span>
     </div>
     <div>

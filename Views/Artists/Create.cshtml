@@ -4,6 +4,17 @@
     ViewData["Title"] = "Create";
 }
 
+<script>
+    function compare() {
+        var startDt = document.getElementById("startDate").value;
+        var endDt = document.getElementById("endDate").value;
+
+        if ((new Date(startDt).getTime() > new Date(endDt).getTime())) {
+            window.alert("awadawasdad");
+        }
+    }
+</script>
+
 <h1>Create</h1>
 
 <h4>Artist</h4>
@@ -25,7 +36,7 @@
             <div class="form-group">
                 <label asp-for="ActivityStop" class="control-label"></label>
                 <input asp-for="ActivityStop" class="form-control" />
-                <span asp-validation-for="ActivityStop" class="text-danger"></span>
+                <span asp-validation-for="ActivityStop" class="text-danger" ></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

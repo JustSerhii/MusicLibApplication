@@ -75,7 +75,17 @@ namespace WebAppLab.Controllers
             albumSong.AlbumId = albumId;
             if (ModelState.IsValid)
             {
-                _context.Add(albumSong);
+
+                var existSongId = await _context.AlbumSongs.Where(s => s.AlbumId == albumId).FirstOrDefaultAsync(c => c.SongId == albumSong.SongId);
+
+				if (existSongId != null)
+				{
+                    ViewBag.Message = "Non Valid";
+                    return RedirectToAction("Index", "AlbumSongs", new { id = albumId, name = _context.Albums.Where(c => c.Id == albumId).FirstOrDefault().Title});;
+				}
+
+
+				_context.Add(albumSong);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "AlbumSongs", new { id = albumId, name = _context.Albums.Where(c => c.Id == albumId).FirstOrDefault().Title});;
             }
