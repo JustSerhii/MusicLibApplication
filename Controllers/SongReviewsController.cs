@@ -67,6 +67,9 @@ namespace WebAppLab.Controllers
             songReview.SongId = songId;
             if (ModelState.IsValid)
             {
+                DateTime time = DateTime.Now;
+                songReview.WritingDate = time;
+
                 _context.Add(songReview);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "SongReviews", new { id = songId, name = _context.Songs.Where(c => c.Id == songId).FirstOrDefault().Title });

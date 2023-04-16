@@ -62,7 +62,8 @@ namespace WebAppLab.Controllers
         public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate")] Album album)
         {
             if (ModelState.IsValid)
-            {
+            {   
+                
                 _context.Add(album);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

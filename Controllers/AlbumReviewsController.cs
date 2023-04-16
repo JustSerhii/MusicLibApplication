@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAppLab;
 using Microsoft.AspNetCore.Authorization;
+using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace WebAppLab.Controllers
 {
@@ -64,9 +66,13 @@ namespace WebAppLab.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int albumId, [Bind("Id,AlbumId,Title,WritingDate,ReviewContent,AlbumScore")] AlbumReview albumReview)
         {
+            
             albumReview.AlbumId = albumId;
             if (ModelState.IsValid)
             {
+                DateTime time = DateTime.Now;
+                albumReview.WritingDate = time;
+                
                 _context.Add(albumReview);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "AlbumReviews", new { id = albumId, name = _context.Albums.Where(c => c.Id == albumId).FirstOrDefault().Title });
