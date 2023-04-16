@@ -51,6 +51,7 @@ namespace WebAppLab.Controllers
         public IActionResult Login(string returnUrl = null)
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
+
         }
 
         [HttpPost]
@@ -70,6 +71,7 @@ namespace WebAppLab.Controllers
                     }
                     else
                     {
+
                         return RedirectToAction("Index", "Home");
                     }
                 }

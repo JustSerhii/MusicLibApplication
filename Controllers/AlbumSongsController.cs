@@ -80,8 +80,8 @@ namespace WebAppLab.Controllers
 
 				if (existSongId != null)
 				{
-                    ViewBag.Message = "Non Valid";
-                    return RedirectToAction("Index", "AlbumSongs", new { id = albumId, name = _context.Albums.Where(c => c.Id == albumId).FirstOrDefault().Title});;
+                    ModelState.AddModelError("SongId", "Not available song");
+					return View(existSongId);
 				}
 
 
@@ -107,8 +107,8 @@ namespace WebAppLab.Controllers
             {
                 return NotFound();
             }
-            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "Id", albumSong.AlbumId);
-            ViewData["SongId"] = new SelectList(_context.Songs, "Id", "Id", albumSong.SongId);
+            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "Title", albumSong.AlbumId);
+            ViewData["SongId"] = new SelectList(_context.Songs, "Id", "Title", albumSong.SongId);
             return View(albumSong);
         }
 
@@ -117,16 +117,24 @@ namespace WebAppLab.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,SongId,AlbumId")] AlbumSong albumSong)
+        public async Task<IActionResult> Edit(int albumId, int id, [Bind("Id,SongId,AlbumId")] AlbumSong albumSong)
         {
-            if (id != albumSong.Id)
+			albumSong.AlbumId = albumId;
+			if (id != albumSong.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
+				var existSongId = await _context.AlbumSongs.Where(s => s.AlbumId == albumId).FirstOrDefaultAsync(c => c.SongId == albumSong.SongId);
+
+				if (existSongId != null)
+				{
+					ModelState.AddModelError("SongId", "Not available song");
+					return View(existSongId);
+				}
+				try
                 {
                     _context.Update(albumSong);
                     await _context.SaveChangesAsync();

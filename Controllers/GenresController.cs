@@ -60,7 +60,14 @@ namespace WebAppLab.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(genre);
+				var existGenreName = await _context.Genres.FirstOrDefaultAsync(c => c.GenreName == genre.GenreName);
+				if (existGenreName != null)
+				{
+					ModelState.AddModelError("GenreName", "Genre already exists");
+					return View(existGenreName);
+				}
+
+				_context.Add(genre);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -97,7 +104,13 @@ namespace WebAppLab.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+				var existGenreName = await _context.Genres.FirstOrDefaultAsync(c => c.GenreName == genre.GenreName);
+				if (existGenreName != null)
+				{
+					ModelState.AddModelError("GenreName", "Genre already exists");
+					return View(existGenreName);
+				}
+				try
                 {
                     _context.Update(genre);
                     await _context.SaveChangesAsync();

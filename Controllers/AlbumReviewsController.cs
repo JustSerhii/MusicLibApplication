@@ -72,8 +72,8 @@ namespace WebAppLab.Controllers
             {
                 DateTime time = DateTime.Now;
                 albumReview.WritingDate = time;
-                
-                _context.Add(albumReview);
+
+				_context.Add(albumReview);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index", "AlbumReviews", new { id = albumId, name = _context.Albums.Where(c => c.Id == albumId).FirstOrDefault().Title });
             }
